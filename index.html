@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sprouts — o jogo que não cabe num tabuleiro</title>
+<meta name="description" content="Sprouts varrido at&#233; 4 pontos, com Euler conferindo cada posi&#231;&#227;o: toda partida dura entre 2n e 3n-1 jogadas, e todos os valores entre os dois limites acontecem.">
+<link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+
+<header>
+  <h1>Sprouts</h1>
+  <p>Comece com alguns pontos. Cada jogada liga dois pontos por uma curva que não cruza nada do que já está desenhado, e põe um ponto novo no meio dela. Nenhum ponto pode ter mais de três pontas saindo. Quem não consegue jogar, perde.</p>
+</header>
+
+<main>
+
+<section>
+  <h2>Jogue pela estrutura</h2>
+  <div class="painel">
+    <p style="margin:0 0 14px;color:var(--fraco);font-size:0.92rem">
+      Sprouts não tem tabuleiro: a posição é um desenho no plano, e o que importa é só como ele
+      <span class="forte">separa</span> o plano. Então aqui a posição aparece do jeito que a busca
+      a enxerga — uma carta por região, com as fronteiras que a cercam e os pontos soltos que estão
+      dentro. O número em cada bolinha é o nome do ponto; a cor é quantas vidas sobram.
+    </p>
+    <div class="linha" style="margin-bottom:14px">
+      <label for="quantos">pontos:</label>
+      <input id="quantos" type="number" min="1" max="7" value="3">
+      <button id="novo" type="button">Começar</button>
+    </div>
+    <div id="palco"></div>
+    <div id="jogadas"></div>
+    <p id="recado"></p>
+    <p id="placar"></p>
+  </div>
+</section>
+
+<section>
+  <h2>Quem ganha</h2>
+  <div class="painel">
+    <table>
+      <thead><tr><th>pontos</th><th>ganha</th><th>posições visitadas</th><th>resultado conhecido</th><th>bate</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>segundo</td><td>3</td><td>segundo</td><td>sim</td></tr>
+        <tr><td>2</td><td>segundo</td><td>52</td><td>segundo</td><td>sim</td></tr>
+        <tr><td>3</td><td>primeiro</td><td>1.294</td><td>primeiro</td><td>sim</td></tr>
+        <tr><td>4</td><td class="forte">primeiro</td><td class="forte">119.144</td><td>primeiro</td><td>sim</td></tr>
+        <tr><td>5</td><td>—</td><td>passa de 50.000 sem terminar</td><td>primeiro</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:14px 0 0;color:var(--fraco);font-size:0.92rem">
+      O resultado conhecido diz que o primeiro ganha quando o número de pontos deixa resto 3, 4 ou 5
+      na divisão por 6. Ele <span class="forte">concorda</span> com a busca nos quatro tamanhos
+      varridos — mas é gabarito, e não prova: quem prova aqui são as contas de dentro.
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2>As contas que amarram cada posição</h2>
+  <div class="painel">
+    <p style="margin:0 0 12px">
+      Um gerador de jogadas errado em Sprouts não trava nem reclama: ele devolve uma árvore
+      plausível e um vencedor plausível. Por isso cada posição visitada é conferida por três contas
+      independentes:
+    </p>
+    <ul style="margin:0;color:var(--fraco);font-size:0.95rem;line-height:1.7">
+      <li>o <strong>grau</strong> de cada ponto contra o número de vezes que ele aparece nas fronteiras;</li>
+      <li>as <strong>vidas</strong> totais contra as jogadas feitas: cada jogada gasta duas e cria uma, então o total cai de um em um;</li>
+      <li><strong>Euler</strong>: regiões = arestas − vértices + 1 + componentes.</li>
+    </ul>
+    <p style="margin:14px 0 0;color:var(--fraco);font-size:0.92rem">
+      A de Euler é a que mais importa. Confundir uma jogada que <span class="forte">parte</span> a
+      região com uma que não parte muda o número de regiões e mais nada — é o erro que passa
+      despercebido. Nas <span class="forte">120.493</span> posições de 1 a 4 pontos,
+      <span class="forte">zero</span> quebras.
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2>Quanto dura uma partida</h2>
+  <div class="painel">
+    <table>
+      <thead><tr><th>pontos</th><th>comprimentos possíveis</th><th>limites 2n … 3n−1</th><th>todos eles</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>2</td><td>2 … 2</td><td>sim</td></tr>
+        <tr><td>2</td><td>4, 5</td><td>4 … 5</td><td>sim</td></tr>
+        <tr><td>3</td><td>6, 7, 8</td><td>6 … 8</td><td>sim</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:14px 0 0;color:var(--fraco);font-size:0.92rem">
+      Toda partida de Sprouts dura entre 2n e 3n−1 jogadas, jogue-se como se jogar. Varrendo
+      <span class="forte">todas</span> as partidas até 3 pontos, os dois limites são alcançados e
+      <span class="forte">nenhum valor entre eles falta</span>. E em 1.000 partidas sorteadas com
+      4, 5, 6, 8 e 10 pontos, <span class="forte">nenhuma</span> saiu dos limites.
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2>As primeiras jogadas</h2>
+  <div class="painel">
+    <table>
+      <thead><tr><th>pontos</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr></thead>
+      <tbody>
+        <tr><td>jogadas diferentes</td><td>1</td><td>2</td><td>3</td><td>3</td><td>4</td><td>4</td><td>5</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:14px 0 0;color:var(--fraco);font-size:0.92rem">
+      Com n pontos soltos numa região só, ou se ligam dois deles — <span class="forte">um</span>
+      jeito, porque os pontos são todos iguais — ou se faz um laço num deles, e aí os outros n−1 se
+      repartem entre as duas regiões novas, que são simétricas: ⌊(n−1)/2⌋ + 1 jeitos. Dá
+      <span class="forte">⌊(n−1)/2⌋ + 2</span>, e a varredura concorda de n = 2 a n = 9. Com quatro
+      pontos há <span class="forte">três</span> aberturas — as mesmas três de n = 3.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>
+    <a href="https://github.com/condeDeveloper/brotos">Código e números no GitHub</a> ·
+    JavaScript puro, sem dependência e sem build.
+  </p>
+</footer>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
