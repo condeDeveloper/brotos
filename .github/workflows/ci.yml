@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  testes:
+    name: testes (${{ matrix.so }}, node ${{ matrix.node }})
+    runs-on: ${{ matrix.so }}
+    strategy:
+      fail-fast: false
+      matrix:
+        so: [ubuntu-latest, windows-latest, macos-latest]
+        node: ['20', '22', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: nucleo e medidas
+        shell: bash
+        run: node --test testes/nucleo.test.js testes/medidas.test.js
+      - name: a arvore inteira de 4 pontos
+        shell: bash
+        run: node --test testes/pesados.test.js
+
+  medidas:
+    name: tabelas do README
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: as contas de dentro, em toda posicao
+        run: node ferramentas/medidor.js invariantes
+      - name: quanto dura uma partida
+        run: node ferramentas/medidor.js comprimento
+      - name: as primeiras jogadas
+        run: node ferramentas/medidor.js aberturas
+      - name: uma partida posicao por posicao
+        run: node ferramentas/medidor.js partida
+      - name: quem ganha, varrendo a arvore inteira
+        run: node ferramentas/medidor.js vencedores
